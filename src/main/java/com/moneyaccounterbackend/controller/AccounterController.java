@@ -39,6 +39,7 @@ public class AccounterController {
 
     @GetMapping("/list")
     public List<User> listUsers() {
+        log.info("RECEIVED REQUEST TO LIST ALL USERS.");
         return userService.listAllUsers();
     }
 
