@@ -20,5 +20,6 @@ public class Record {
     private String description;
 
     @Column
-    private String price;
+    private String amount;
+
 }
