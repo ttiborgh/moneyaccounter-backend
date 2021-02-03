@@ -20,7 +20,7 @@ public class Record {
     private String description;
 
     @Column
-    private String amount;
+    private Long amount;
 
     @Column
     private Boolean spending;

@@ -48,8 +48,9 @@ public class AccounterController {
     @ResponseStatus(HttpStatus.CREATED)
     public User addNewRecord(@PathVariable(name = "id") Long id, @RequestBody Record record) {
         log.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", id, record);
-
-        return userService.addingNewRecord(id, record);
+        User user = userService.addingNewRecord(id, record);
+        userService.calculatingNewBalanceOfUser(user);
+        return user;
     }
 
     @GetMapping("/list")

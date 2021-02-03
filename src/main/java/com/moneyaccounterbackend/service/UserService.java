@@ -80,4 +80,14 @@ public class UserService {
 
         return user.get();
     }
+
+    public void calculatingNewBalanceOfUser(User user) {
+        log.info("CALCULATING BALANCE:");
+        List<Record> records = List.copyOf(user.getListOfRecords());
+        Long sum = records.stream().mapToLong(elem -> elem.getSpending() ? (elem.getAmount() * -1L) : elem.getAmount()).sum();
+
+        user.setBalance(sum);
+        userRepository.save(user);
+        log.debug("THE RESULT IS: {}", sum);
+    }
 }
