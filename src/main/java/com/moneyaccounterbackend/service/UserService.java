@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -89,5 +90,18 @@ public class UserService {
         user.setBalance(sum);
         userRepository.save(user);
         log.debug("THE RESULT IS: {}", sum);
+    }
+
+    public User deleteRecordById(Long userId, Long recordId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if(user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        } else {
+            List<Record> newList = user.get().getListOfRecords().stream().filter(elem -> elem.getId() == recordId).collect(Collectors.toList());
+            user.get().setListOfRecords(newList);
+        }
+
+        return userRepository.save(user.get());
     }
 }

@@ -24,7 +24,7 @@ public class AccounterController {
     }
 
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public User loginUser(@RequestParam String username,
                           @RequestParam String password) {
         log.info("NEW LOGIN: {} with password {}", username, password);
@@ -54,29 +54,38 @@ public class AccounterController {
     }
 
     @GetMapping("/list")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.FOUND)
     public List<User> listUsers() {
         log.info("RECEIVED REQUEST TO LIST ALL USERS.");
         return userService.listAllUsers();
     }
 
     @GetMapping("/records/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.FOUND)
     public List<Record> getAllRecords(@PathVariable(name = "id") Long id) {
-        log.info("REQUEST FOR RECORDS BY ID {}", id);
+        log.info("REQUEST FOR RECORDS BY USERID {}", id);
         List<Record> listOfRecordsFound = userService.retrieveRecords(id);
 
-        log.debug("REQUEST WAS SUCCESSFUL: {}", listOfRecordsFound);
+        log.info("REQUEST WAS SUCCESSFUL: {}", listOfRecordsFound);
         return listOfRecordsFound;
     }
 
     @GetMapping("/user/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.FOUND)
     public User getUser(@PathVariable(name = "id") Long id) {
         log.info("REQUEST FOR USER BY ID {}", id);
         User foundUser = userService.retrieveUser(id);
 
         log.debug("REQUEST WAS SUCCESSFUL: {}", foundUser);
         return foundUser;
+    }
+
+    @DeleteMapping("/deleterecord/{recordid}/{userid}")
+    @ResponseStatus(HttpStatus.OK)
+    public User deleteRecord(@PathVariable (name = "recordid") Long recordId,
+                             @PathVariable (name = "userid") Long userId) {
+        log.info("REQUEST TO DELETE RECORD: {}.", recordId);
+
+        return userService.deleteRecordById(userId, recordId);
     }
 }
