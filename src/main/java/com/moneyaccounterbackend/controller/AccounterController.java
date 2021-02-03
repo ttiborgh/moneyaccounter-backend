@@ -6,6 +6,7 @@ import com.moneyaccounterbackend.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,15 +24,18 @@ public class AccounterController {
     }
 
     @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
     public User loginUser(@RequestParam String username,
-                             @RequestParam String password) {
+                          @RequestParam String password) {
         log.info("NEW LOGIN: {} with password {}", username, password);
         User loggedInUser = userService.logInUser(username, password);
 
+        log.debug("THE USER LOGGED IN IS {}", loggedInUser);
         return loggedInUser;
     }
 
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public User registerUser(@RequestBody User user) {
         log.info("NEW REGISTRATION: {}", user);
         User newUser = userService.registerUser(user);
@@ -41,22 +45,23 @@ public class AccounterController {
     }
 
     @PostMapping("/record/{id}")
-    public boolean addNewRecord(@PathVariable (name = "id") Long id, @RequestBody Record record) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public User addNewRecord(@PathVariable(name = "id") Long id, @RequestBody Record record) {
         log.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", id, record);
-        boolean successfulAddition = userService.addingNewRecord(id, record);
 
-        log.debug("REQUEST WAS SUCCESSFUL {}", successfulAddition);
-        return successfulAddition;
+        return userService.addingNewRecord(id, record);
     }
 
     @GetMapping("/list")
+    @ResponseStatus(HttpStatus.OK)
     public List<User> listUsers() {
         log.info("RECEIVED REQUEST TO LIST ALL USERS.");
         return userService.listAllUsers();
     }
 
     @GetMapping("/records/{id}")
-    public List<Record> getAllRecords(@PathVariable (name = "id") Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public List<Record> getAllRecords(@PathVariable(name = "id") Long id) {
         log.info("REQUEST FOR RECORDS BY ID {}", id);
         List<Record> listOfRecordsFound = userService.retrieveRecords(id);
 
@@ -64,4 +69,13 @@ public class AccounterController {
         return listOfRecordsFound;
     }
 
+    @GetMapping("/user/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User getUser(@PathVariable(name = "id") Long id) {
+        log.info("REQUEST FOR USER BY ID {}", id);
+        User foundUser = userService.retrieveUser(id);
+
+        log.debug("REQUEST WAS SUCCESSFUL: {}", foundUser);
+        return foundUser;
+    }
 }
