@@ -22,4 +22,7 @@ public class Record {
     @Column
     private String amount;
 
+    @Column
+    private Boolean spending;
+
 }

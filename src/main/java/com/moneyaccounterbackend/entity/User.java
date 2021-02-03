@@ -20,6 +20,7 @@ public class User {
     private String username;
     private String password;
     private String emailAddress;
+    private Long balance = 0L;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
