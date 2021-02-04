@@ -2,6 +2,7 @@ package com.moneyaccounterbackend.service;
 
 import com.moneyaccounterbackend.entity.Record;
 import com.moneyaccounterbackend.entity.User;
+import com.moneyaccounterbackend.repository.RecordRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,12 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final RecordRepository recordRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RecordRepository recordRepository) {
         this.userRepository = userRepository;
+        this.recordRepository = recordRepository;
     }
 
     public User registerUser(User user) {
@@ -78,7 +81,7 @@ public class UserService {
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
+        calculatingNewBalanceOfUser(user.get());
         return user.get();
     }
 
@@ -98,10 +101,10 @@ public class UserService {
         if(user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } else {
-            List<Record> newList = user.get().getListOfRecords().stream().filter(elem -> elem.getId() == recordId).collect(Collectors.toList());
-            user.get().setListOfRecords(newList);
+            recordRepository.deleteById(recordId);
+            calculatingNewBalanceOfUser(user.get());
         }
 
-        return userRepository.save(user.get());
+        return user.get();
     }
 }
