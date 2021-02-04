@@ -30,8 +30,14 @@ public class UserService {
 
     public User registerUser(User user) {
         log.info("REQUEST TO REGISTER: {}", user);
-        User registeredUser = userRepository.save(user);
+        Optional<User> registeredUserByEmail = userRepository.findByEmail(user.getEmail());
+        Optional<User> registeredUserByPassword = userRepository.findByUsername(user.getUsername());
 
+        if (registeredUserByEmail.isPresent() || registeredUserByPassword.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        User registeredUser = userRepository.save(user);
         log.debug("USER SUCCESSFULLY REGISTERED: {}", registeredUser);
         return registeredUser;
     }
