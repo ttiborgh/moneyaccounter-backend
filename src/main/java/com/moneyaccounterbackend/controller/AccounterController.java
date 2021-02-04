@@ -49,19 +49,17 @@ public class AccounterController {
     public User addNewRecord(@PathVariable(name = "id") Long id, @RequestBody Record record) {
         log.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", id, record);
         User user = userService.addingNewRecord(id, record);
-        userService.calculatingNewBalanceOfUser(user);
+        //userService.calculatingNewBalanceOfUser(user);
         return user;
     }
 
     @GetMapping("/list")
-    @ResponseStatus(HttpStatus.FOUND)
     public List<User> listUsers() {
         log.info("RECEIVED REQUEST TO LIST ALL USERS.");
         return userService.listAllUsers();
     }
 
     @GetMapping("/records/{id}")
-    @ResponseStatus(HttpStatus.FOUND)
     public List<Record> getAllRecords(@PathVariable(name = "id") Long id) {
         log.info("REQUEST FOR RECORDS BY USERID {}", id);
         List<Record> listOfRecordsFound = userService.retrieveRecords(id);
@@ -71,7 +69,6 @@ public class AccounterController {
     }
 
     @GetMapping("/user/{id}")
-    @ResponseStatus(HttpStatus.FOUND)
     public User getUser(@PathVariable(name = "id") Long id) {
         log.info("REQUEST FOR USER BY ID {}", id);
         User foundUser = userService.retrieveUser(id);
@@ -81,7 +78,6 @@ public class AccounterController {
     }
 
     @DeleteMapping("/deleterecord/{recordid}/{userid}")
-    @ResponseStatus(HttpStatus.OK)
     public User deleteRecord(@PathVariable (name = "recordid") Long recordId,
                              @PathVariable (name = "userid") Long userId) {
         log.info("REQUEST TO DELETE RECORD: {}.", recordId);
