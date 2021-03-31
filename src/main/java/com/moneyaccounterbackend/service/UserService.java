@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -51,7 +50,7 @@ public class UserService {
         Optional<User> foundUserByPassword = userRepository.findByPassword(password);
 
         if (foundUserByName.isPresent() && foundUserByPassword.isPresent()) {
-            if (foundUserByName.get().getId() == foundUserByPassword.get().getId()) {
+            if (foundUserByName.get().getId().equals(foundUserByPassword.get().getId())) {
                 return foundUserByName.get();
             }
         }
@@ -64,8 +63,7 @@ public class UserService {
 
         if (foundUser.isPresent()) {
             foundUser.get().getListOfRecords().add(record);
-            User user = userRepository.save(foundUser.get());
-            return user;
+            return userRepository.save(foundUser.get());
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -87,6 +85,7 @@ public class UserService {
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+
         calculatingNewBalanceOfUser(user.get());
         return user.get();
     }
@@ -94,11 +93,11 @@ public class UserService {
     public void calculatingNewBalanceOfUser(User user) {
         log.info("CALCULATING BALANCE:");
         List<Record> records = List.copyOf(user.getListOfRecords());
-        Long sum = records.stream().mapToLong(elem -> elem.getSpending() ? (elem.getAmount() * -1L) : elem.getAmount()).sum();
+        Long sumOfRecords = records.stream().mapToLong(record -> record.getSpending() ? (record.getAmount() * -1L) : record.getAmount()).sum();
 
-        user.setBalance(sum);
+        user.setBalance(sumOfRecords);
         userRepository.save(user);
-        log.debug("THE RESULT IS: {}", sum);
+        log.debug("THE RESULT IS: {}", sumOfRecords);
     }
 
     public User deleteRecordById(Long userId, Long recordId) {
