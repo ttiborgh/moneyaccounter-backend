@@ -25,4 +25,6 @@ public class Record {
     @Column
     private Boolean spending;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User recordOwner;
 }
