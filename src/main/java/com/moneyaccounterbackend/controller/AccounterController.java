@@ -46,11 +46,11 @@ public class AccounterController {
         return newUser;
     }
 
-    @PostMapping("/record/{id}")
+    @PostMapping("/record/{userid}")
     @ResponseStatus(HttpStatus.CREATED)
-    public User addNewRecord(@PathVariable(name = "id") Long id, @RequestBody Record record) {
-        log.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", id, record);
-        User user = userService.addingNewRecord(id, record);
+    public User addNewRecord(@PathVariable(name = "userid") Long userId, @RequestBody Record record) {
+        log.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", userId, record);
+        User user = userService.addingNewRecord(userId, record);
 
         return user;
     }
@@ -62,19 +62,19 @@ public class AccounterController {
         return userService.listAllUsers();
     }
 
-    @GetMapping("/records/{id}")
-    public List<Record> getAllRecords(@PathVariable(name = "id") Long id) {
-        log.info("REQUEST FOR RECORDS BY USERID {}", id);
-        List<Record> listOfRecordsFound = userService.retrieveRecords(id);
+    @GetMapping("/records/{userId}")
+    public List<Record> getAllRecords(@PathVariable(name = "userId") Long userId) {
+        log.info("REQUEST FOR RECORDS BY USERID {}", userId);
+        List<Record> listOfRecordsFound = userService.retrieveRecords(userId);
 
         log.info("REQUEST WAS SUCCESSFUL: {}", listOfRecordsFound);
         return listOfRecordsFound;
     }
 
-    @GetMapping("/user/{id}")
-    public User getUser(@PathVariable(name = "id") Long id) {
-        log.info("REQUEST FOR USER BY ID {}", id);
-        User foundUser = userService.retrieveUser(id);
+    @GetMapping("/user/{userId}")
+    public User getUser(@PathVariable(name = "userId") Long userId) {
+        log.info("REQUEST FOR USER BY ID {}", userId);
+        User foundUser = userService.retrieveUser(userId);
 
         log.debug("REQUEST WAS SUCCESSFUL: {}", foundUser);
         return foundUser;
