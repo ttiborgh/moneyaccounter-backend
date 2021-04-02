@@ -12,9 +12,12 @@ public class StockService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StockService.class);
     private final StockRepository stockRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public StockService(StockRepository stockRepository) {
+    public StockService(StockRepository stockRepository, UserRepository userRepository) {
         this.stockRepository = stockRepository;
+        this.userRepository = userRepository;
     }
+
 }
