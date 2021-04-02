@@ -67,7 +67,7 @@ public class AccounterController {
         log.info("REQUEST FOR RECORDS BY USERID {}", userId);
         List<Record> listOfRecordsFound = userService.retrieveRecords(userId);
 
-        log.info("REQUEST WAS SUCCESSFUL: {}", listOfRecordsFound);
+        log.info("REQUEST WAS SUCCESSFUL.");
         return listOfRecordsFound;
     }
 
@@ -81,8 +81,8 @@ public class AccounterController {
     }
 
     @DeleteMapping("/deleterecord/{recordid}/{userid}")
-    public User deleteRecord(@PathVariable (name = "recordid") Long recordId,
-                             @PathVariable (name = "userid") Long userId) {
+    public User deleteRecord(@PathVariable(name = "recordid") Long recordId,
+                             @PathVariable(name = "userid") Long userId) {
         log.info("REQUEST TO DELETE RECORD: {}.", recordId);
 
         return userService.deleteRecordById(userId, recordId);
