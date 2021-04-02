@@ -1,7 +1,5 @@
 package com.moneyaccounterbackend.controller;
 
-import com.moneyaccounterbackend.entity.Record;
-import com.moneyaccounterbackend.service.RecordService;
 import com.moneyaccounterbackend.service.UserService;
 import com.moneyaccounterbackend.entity.User;
 import org.slf4j.Logger;
@@ -14,16 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class AccounterController {
+public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccounterController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final RecordService recordService;
 
     @Autowired
-    public AccounterController(UserService userService, RecordService recordService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.recordService = recordService;
     }
 
     @PostMapping("/login")
