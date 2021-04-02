@@ -27,5 +27,5 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<Record> listOfRecords;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-    private List<Record> listOfStocks;
+    private List<Stock> listOfStocks;
 }
