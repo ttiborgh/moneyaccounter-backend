@@ -4,7 +4,6 @@ import com.moneyaccounterbackend.entity.Record;
 import com.moneyaccounterbackend.entity.User;
 import com.moneyaccounterbackend.repository.RecordRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class UserService {
 
         user.setRegisteredAt(LocalDateTime.now());
         User registeredUser = userRepository.save(user);
-        
+
         LOGGER.debug("USER SUCCESSFULLY REGISTERED: {}", registeredUser);
         return registeredUser;
     }
@@ -62,31 +61,6 @@ public class UserService {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    public User addingNewRecord(Long id, Record record) {
-        Optional<User> foundUser = userRepository.findById(id);
-
-        if (foundUser.isPresent()) {
-            User user = foundUser.get();
-            record.setUser(user);
-            record.setCreatedAt(LocalDateTime.now());
-            recordRepository.save(record);
-            user.getListOfRecords().add(record);
-            return userRepository.save(user);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    public List<Record> retrieveRecords(Long id) {
-        Optional<User> foundUser = userRepository.findById(id);
-
-        if(foundUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        return foundUser.get().getListOfRecords();
-    }
-
     public User retrieveUser(Long id) {
         Optional<User> user = userRepository.findById(id);
 
@@ -106,18 +80,5 @@ public class UserService {
         user.setBalance(sumOfRecords);
         userRepository.save(user);
         LOGGER.debug("THE RESULT IS: {}", sumOfRecords);
-    }
-
-    public User deleteRecordById(Long userId, Long recordId) {
-        Optional<User> user = userRepository.findById(userId);
-
-        if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        } else {
-            recordRepository.deleteById(recordId);
-            calculatingNewBalanceOfUser(user.get());
-        }
-
-        return user.get();
     }
 }
