@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class AccounterController {
 
-    private static final Logger log = LoggerFactory.getLogger(AccounterController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccounterController.class);
     private final UserService userService;
 
     @Autowired
@@ -29,27 +29,27 @@ public class AccounterController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public User loginUser(@RequestParam String username,
                           @RequestParam String password) {
-        log.info("NEW LOGIN: {} with password {}", username, password);
+        LOGGER.info("NEW LOGIN: {} with password {}", username, password);
         User loggedInUser = userService.logInUser(username, password);
 
-        log.debug("THE USER LOGGED IN IS {}", loggedInUser);
+        LOGGER.debug("THE USER LOGGED IN IS {}", loggedInUser);
         return loggedInUser;
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public User registerUser(@RequestBody User user) {
-        log.info("NEW REGISTRATION: {}", user);
+        LOGGER.info("NEW REGISTRATION: {}", user);
         User newUser = userService.registerUser(user);
 
-        log.debug("USER REGISTERED: {}", newUser);
+        LOGGER.debug("USER REGISTERED: {}", newUser);
         return newUser;
     }
 
     @PostMapping("/record/{userid}")
     @ResponseStatus(HttpStatus.CREATED)
     public User addNewRecord(@PathVariable(name = "userid") Long userId, @RequestBody Record record) {
-        log.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", userId, record);
+        LOGGER.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", userId, record);
         User user = userService.addingNewRecord(userId, record);
 
         return user;
@@ -57,33 +57,33 @@ public class AccounterController {
 
     @GetMapping("/list")
     public List<User> listUsers() {
-        log.info("RECEIVED REQUEST TO LIST ALL USERS.");
+        LOGGER.info("RECEIVED REQUEST TO LIST ALL USERS.");
 
         return userService.listAllUsers();
     }
 
     @GetMapping("/records/{userId}")
     public List<Record> getAllRecords(@PathVariable(name = "userId") Long userId) {
-        log.info("REQUEST FOR RECORDS BY USERID {}", userId);
+        LOGGER.info("REQUEST FOR RECORDS BY USERID {}", userId);
         List<Record> listOfRecordsFound = userService.retrieveRecords(userId);
 
-        log.info("REQUEST WAS SUCCESSFUL.");
+        LOGGER.info("REQUEST WAS SUCCESSFUL.");
         return listOfRecordsFound;
     }
 
     @GetMapping("/user/{userId}")
     public User getUser(@PathVariable(name = "userId") Long userId) {
-        log.info("REQUEST FOR USER BY ID {}", userId);
+        LOGGER.info("REQUEST FOR USER BY ID {}", userId);
         User foundUser = userService.retrieveUser(userId);
 
-        log.debug("REQUEST WAS SUCCESSFUL: {}", foundUser);
+        LOGGER.debug("REQUEST WAS SUCCESSFUL: {}", foundUser);
         return foundUser;
     }
 
     @DeleteMapping("/deleterecord/{recordid}/{userid}")
     public User deleteRecord(@PathVariable(name = "recordid") Long recordId,
                              @PathVariable(name = "userid") Long userId) {
-        log.info("REQUEST TO DELETE RECORD: {}.", recordId);
+        LOGGER.info("REQUEST TO DELETE RECORD: {}.", recordId);
 
         return userService.deleteRecordById(userId, recordId);
     }
