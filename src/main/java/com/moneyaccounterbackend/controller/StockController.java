@@ -22,10 +22,13 @@ public class StockController {
     }
 
     @PostMapping("/add/{userid}")
-    public Stock addNewStock (@PathVariable(name = "userid") Long userId, @RequestBody Stock stock) {
+    public Stock addNewStock (@PathVariable(name = "userid") Long userId,
+                              @RequestParam(name = "stock") String stockName,
+                              @RequestParam(name = "quantity") Long quantity,
+                              @RequestParam(name = "price") Double price) {
         LOGGER.info("REQUEST TO ADD NEW STOCK BY USER: {}", userId);
 
-        Stock stockCreated = stockService.createNewStock(userId, stock);
+        Stock stockCreated = stockService.createNewStockEntry(userId, stockName, quantity, price);
 
         LOGGER.debug("REQUEST TO ADD NEW STOCK SUCCESSFUL.");
         return stockCreated;
