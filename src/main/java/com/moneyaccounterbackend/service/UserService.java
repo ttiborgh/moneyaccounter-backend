@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,7 @@ public class UserService {
         if (foundUser.isPresent()) {
             User user = foundUser.get();
             record.setUser(user);
+            record.setCreatedAt(LocalDateTime.now());
             recordRepository.save(record);
             user.getListOfRecords().add(record);
             return userRepository.save(user);
