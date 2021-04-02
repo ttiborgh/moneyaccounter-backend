@@ -25,7 +25,7 @@ public class StockController {
 
         Stock stockCreated = stockService.createNewStock(userId, stock);
 
-        LOGGER.debug("REQUEST TO ADD NEW STOCK SUCCESSFULL.");
+        LOGGER.debug("REQUEST TO ADD NEW STOCK SUCCESSFUL.");
         return stockCreated;
     }
 

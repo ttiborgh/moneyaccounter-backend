@@ -26,11 +26,10 @@ public class StockService {
 
     public Stock createNewStock(Long userId, Stock stock) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
         stock.setUser(user);
         Stock savedStock = stockRepository.save(stock);
         user.getListOfStocks().add(savedStock);
+
         return savedStock;
     }
-
 }
