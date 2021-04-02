@@ -1,5 +1,6 @@
 package com.moneyaccounterbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +23,6 @@ public class Stock {
     @Column
     private Long quantity;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 }
