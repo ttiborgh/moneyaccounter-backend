@@ -26,5 +26,6 @@ public class Record {
     private Boolean spending;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User recordOwner;
+    @JoinColumn(name = "user_id")
+    private User user;
 }
