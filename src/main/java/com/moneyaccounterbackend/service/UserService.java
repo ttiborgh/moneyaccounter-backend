@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final RecordRepository recordRepository;
 
@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public User registerUser(User user) {
-        log.info("REQUEST TO REGISTER: {}", user);
+        LOGGER.info("REQUEST TO REGISTER: {}", user);
         Optional<User> registeredUserByEmail = userRepository.findByEmail(user.getEmail());
         Optional<User> registeredUserByPassword = userRepository.findByUsername(user.getUsername());
 
@@ -37,7 +37,7 @@ public class UserService {
         }
 
         User registeredUser = userRepository.save(user);
-        log.debug("USER SUCCESSFULLY REGISTERED: {}", registeredUser);
+        LOGGER.debug("USER SUCCESSFULLY REGISTERED: {}", registeredUser);
         return registeredUser;
     }
 
@@ -54,7 +54,7 @@ public class UserService {
                 return foundUserByName.get();
             }
         }
-        log.info("USER NOT FOUND.");
+        LOGGER.info("USER NOT FOUND.");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
@@ -94,13 +94,13 @@ public class UserService {
     }
 
     public void calculatingNewBalanceOfUser(User user) {
-        log.info("CALCULATING BALANCE:");
+        LOGGER.info("CALCULATING BALANCE:");
         List<Record> records = List.copyOf(user.getListOfRecords());
         Long sumOfRecords = records.stream().mapToLong(record -> record.getSpending() ? (record.getAmount() * -1L) : record.getAmount()).sum();
 
         user.setBalance(sumOfRecords);
         userRepository.save(user);
-        log.debug("THE RESULT IS: {}", sumOfRecords);
+        LOGGER.debug("THE RESULT IS: {}", sumOfRecords);
     }
 
     public User deleteRecordById(Long userId, Long recordId) {
