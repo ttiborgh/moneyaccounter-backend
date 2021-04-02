@@ -26,4 +26,6 @@ public class User {
     private Long balance = 0L;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<Record> listOfRecords;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    private List<Record> listOfStocks;
 }
