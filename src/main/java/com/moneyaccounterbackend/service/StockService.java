@@ -3,6 +3,7 @@ package com.moneyaccounterbackend.service;
 import com.moneyaccounterbackend.entity.Stock;
 import com.moneyaccounterbackend.entity.StockPurchaseDetails;
 import com.moneyaccounterbackend.entity.User;
+import com.moneyaccounterbackend.repository.StockPurchaseDetailsRepository;
 import com.moneyaccounterbackend.repository.StockRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
 import org.slf4j.Logger;
@@ -12,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,20 +24,42 @@ public class StockService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StockService.class);
     private final StockRepository stockRepository;
     private final UserRepository userRepository;
+    private final StockPurchaseDetailsRepository stockPurchaseDetailsRepository;
 
     @Autowired
-    public StockService(StockRepository stockRepository, UserRepository userRepository) {
+    public StockService(StockRepository stockRepository, UserRepository userRepository, StockPurchaseDetailsRepository stockPurchaseDetailsRepository) {
         this.stockRepository = stockRepository;
         this.userRepository = userRepository;
+        this.stockPurchaseDetailsRepository = stockPurchaseDetailsRepository;
     }
 
-    public Stock createNewStock(Long userId, Stock stock) {
+    public Stock createNewStockEntry(Long userId, String stockName, Long quantity, Double price) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        stock.setUser(user);
-        Stock savedStock = stockRepository.save(stock);
-        user.getListOfStocks().add(savedStock);
+        Optional<Stock> stock = stockRepository.findByStockName(stockName);
 
-        return savedStock;
+        if (stock.isPresent()) {
+            Stock stockToBeUpdated = stock.get();
+            StockPurchaseDetails newPurchaseDetails = StockPurchaseDetails.builder()
+                    .quantity(quantity)
+                    .price(price)
+                    .createdAt(LocalDateTime.now())
+                    .stock(stockToBeUpdated)
+                    .build();
+            stockToBeUpdated.getStockPurchaseDetails().add(newPurchaseDetails);
+
+            return stockRepository.save(stockToBeUpdated);
+        } else {
+            StockPurchaseDetails newPurchaseDetails = StockPurchaseDetails.builder()
+                    .quantity(quantity)
+                    .price(price)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            Stock newStock = Stock.builder().stockName(stockName).user(user).build();
+            newPurchaseDetails.setStock(newStock);
+            newStock.setStockPurchaseDetails(List.of(newPurchaseDetails));
+
+            return stockRepository.save(newStock);
+        }
     }
 
     public List<Stock> listStocks(Long userId) {
