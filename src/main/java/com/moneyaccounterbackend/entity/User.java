@@ -22,7 +22,6 @@ public class User {
     private String email;
     private Long balance = 0L;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<Record> listOfRecords;
 }
