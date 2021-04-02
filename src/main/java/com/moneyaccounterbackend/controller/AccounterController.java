@@ -47,29 +47,11 @@ public class AccounterController {
         return newUser;
     }
 
-    @PostMapping("/record/{userid}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public User addNewRecord(@PathVariable(name = "userid") Long userId, @RequestBody Record record) {
-        LOGGER.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", userId, record);
-        User user = recordService.addingNewRecord(userId, record);
-
-        return user;
-    }
-
     @GetMapping("/list")
     public List<User> listUsers() {
         LOGGER.info("RECEIVED REQUEST TO LIST ALL USERS.");
 
         return userService.listAllUsers();
-    }
-
-    @GetMapping("/records/{userId}")
-    public List<Record> getAllRecords(@PathVariable(name = "userId") Long userId) {
-        LOGGER.info("REQUEST FOR RECORDS BY USERID {}", userId);
-        List<Record> listOfRecordsFound = recordService.retrieveRecords(userId);
-
-        LOGGER.debug("REQUEST WAS SUCCESSFUL.");
-        return listOfRecordsFound;
     }
 
     @GetMapping("/user/{userId}")
@@ -79,13 +61,5 @@ public class AccounterController {
 
         LOGGER.debug("REQUEST WAS SUCCESSFUL: {}", foundUser);
         return foundUser;
-    }
-
-    @DeleteMapping("/deleterecord/{recordid}/{userid}")
-    public User deleteRecord(@PathVariable(name = "recordid") Long recordId,
-                             @PathVariable(name = "userid") Long userId) {
-        LOGGER.info("REQUEST TO DELETE RECORD: {}.", recordId);
-
-        return recordService.deleteRecordById(userId, recordId);
     }
 }
