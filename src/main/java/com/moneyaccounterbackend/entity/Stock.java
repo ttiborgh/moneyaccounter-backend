@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.List;
 
 @Data
 @Builder
@@ -20,8 +22,8 @@ public class Stock {
     private Long id;
     @Column
     private String stockName;
-    @Column
-    private Long quantity;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "stock")
+    private List<StockPurchaseDetails> stockPurchaseDetails;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
