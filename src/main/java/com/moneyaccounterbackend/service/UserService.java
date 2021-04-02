@@ -4,6 +4,7 @@ import com.moneyaccounterbackend.entity.Record;
 import com.moneyaccounterbackend.entity.User;
 import com.moneyaccounterbackend.repository.RecordRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,9 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
+        user.setRegisteredAt(LocalDateTime.now());
         User registeredUser = userRepository.save(user);
+        
         LOGGER.debug("USER SUCCESSFULLY REGISTERED: {}", registeredUser);
         return registeredUser;
     }
