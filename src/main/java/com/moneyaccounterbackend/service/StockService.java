@@ -1,6 +1,7 @@
 package com.moneyaccounterbackend.service;
 
 import com.moneyaccounterbackend.entity.Stock;
+import com.moneyaccounterbackend.entity.StockPurchaseDetails;
 import com.moneyaccounterbackend.entity.User;
 import com.moneyaccounterbackend.repository.StockRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StockService {
@@ -31,5 +35,11 @@ public class StockService {
         user.getListOfStocks().add(savedStock);
 
         return savedStock;
+    }
+
+    public List<Stock> listStocks(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return stockRepository.findAll().stream().filter(stock -> stock.getUser().getId().equals(user.getId())).collect(Collectors.toList());
     }
 }
