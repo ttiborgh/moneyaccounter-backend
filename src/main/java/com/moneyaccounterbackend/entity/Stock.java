@@ -21,4 +21,6 @@ public class Stock {
     private String stockName;
     @Column
     private Long quantity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 }
