@@ -3,6 +3,7 @@ package com.moneyaccounterbackend.service;
 import com.moneyaccounterbackend.entity.Stock;
 import com.moneyaccounterbackend.entity.StockPurchaseDetails;
 import com.moneyaccounterbackend.entity.User;
+import com.moneyaccounterbackend.exception.InvalidStockFormatException;
 import com.moneyaccounterbackend.repository.StockPurchaseDetailsRepository;
 import com.moneyaccounterbackend.repository.StockRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -33,7 +35,8 @@ public class StockService {
         this.stockPurchaseDetailsRepository = stockPurchaseDetailsRepository;
     }
 
-    public Stock createNewStockEntry(Long userId, String stockName, Long quantity, Double price) {
+    public Stock createNewStockEntry(Long userId, String stockName, Long quantity, Double price) throws InvalidStockFormatException {
+        validateStockData(stockName, quantity, price);
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Optional<Stock> stock = stockRepository.findByStockName(stockName);
 
@@ -66,5 +69,17 @@ public class StockService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return stockRepository.findAll().stream().filter(stock -> stock.getUser().getId().equals(user.getId())).collect(Collectors.toList());
+    }
+
+    public void validateStockData(String stockName, Long quantity, Double price) throws InvalidStockFormatException {
+        if (!StringUtils.hasText(stockName) || stockName.length() > 4 || stockName.length() < 1) {
+            throw new InvalidStockFormatException("Stockname has no text or of invalid length: " + stockName);
+        }
+        if (quantity <= 0) {
+            throw new InvalidStockFormatException("Quantity of stock during transaction can't be 0 or lower than that: " + quantity);
+        }
+        if (price < 0) {
+            throw new InvalidStockFormatException("Stock's price is negative: " + price);
+        }
     }
 }
