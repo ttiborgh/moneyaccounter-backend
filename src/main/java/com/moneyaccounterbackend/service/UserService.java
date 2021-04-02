@@ -62,8 +62,11 @@ public class UserService {
         Optional<User> foundUser = userRepository.findById(id);
 
         if (foundUser.isPresent()) {
-            foundUser.get().getListOfRecords().add(record);
-            return userRepository.save(foundUser.get());
+            User user = foundUser.get();
+            record.setUser(user);
+            recordRepository.save(record);
+            user.getListOfRecords().add(record);
+            return userRepository.save(user);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
