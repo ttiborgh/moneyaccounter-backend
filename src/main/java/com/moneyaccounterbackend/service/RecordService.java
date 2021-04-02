@@ -2,11 +2,13 @@ package com.moneyaccounterbackend.service;
 
 import com.moneyaccounterbackend.entity.Record;
 import com.moneyaccounterbackend.entity.User;
+import com.moneyaccounterbackend.exception.InvalidFormatException;
 import com.moneyaccounterbackend.repository.RecordRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -63,5 +65,14 @@ public class RecordService {
         }
 
         return user.get();
+    }
+
+    public void validateRecordData(Record record) throws InvalidFormatException {
+        if (!StringUtils.hasText(record.getDescription())) {
+            throw new InvalidFormatException("Record has no description " + record.getDescription());
+        }
+        if (record.getAmount() == 0) {
+            throw new InvalidFormatException("Record's amount is 0");
+        }
     }
 }
