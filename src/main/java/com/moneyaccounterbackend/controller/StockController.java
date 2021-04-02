@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/stocks")
 public class StockController {
@@ -29,4 +31,10 @@ public class StockController {
         return stockCreated;
     }
 
+    @GetMapping("/listall/{userid}")
+    public List<Stock> listStocksOfUser(@PathVariable(name = "userid") Long userId) {
+        LOGGER.info("REQUEST TO LIST STOCKS FROM USER: {}", userId);
+
+        return stockService.listStocks(userId);
+    }
 }
