@@ -1,7 +1,7 @@
 package com.moneyaccounterbackend.controller;
 
 import com.moneyaccounterbackend.entity.Stock;
-import com.moneyaccounterbackend.exception.InvalidStockFormatException;
+import com.moneyaccounterbackend.exception.InvalidFormatException;
 import com.moneyaccounterbackend.service.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class StockController {
     public Stock addNewStock (@PathVariable(name = "userid") Long userId,
                               @RequestParam(name = "stock") String stockName,
                               @RequestParam(name = "quantity") Long quantity,
-                              @RequestParam(name = "price") Double price) throws InvalidStockFormatException {
+                              @RequestParam(name = "price") Double price) throws InvalidFormatException {
         LOGGER.info("REQUEST TO ADD NEW STOCK BY USER: {}", userId);
 
         Stock stockCreated = stockService.createNewStockEntry(userId, stockName, quantity, price);
