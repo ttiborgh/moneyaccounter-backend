@@ -18,5 +18,15 @@ public class StockController {
     public StockController (StockService stockService) {
         this.stockService = stockService;
     }
-    
+
+    @PostMapping("/add/{userid}")
+    public Stock addNewStock (@PathVariable(name = "userid") Long userId, @RequestBody Stock stock) {
+        LOGGER.info("REQUEST TO ADD NEW STOCK BY USER: {}", userId);
+
+        Stock stockCreated = stockService.createNewStock(userId, stock);
+
+        LOGGER.debug("REQUEST TO ADD NEW STOCK SUCCESSFULL.");
+        return stockCreated;
+    }
+
 }
