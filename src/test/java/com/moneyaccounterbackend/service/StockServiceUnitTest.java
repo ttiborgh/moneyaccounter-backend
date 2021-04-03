@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -138,6 +139,31 @@ class StockServiceUnitTest {
         verify(stockRepository, times(1)).save(any(Stock.class));
     }
 
+    @Test
+    public void givenExistingUser_whenListingAllHisStocks_thenListOfStocksIsReturned() {
+        givenMockedUserRepositoryFindingUser();
+        when(stockRepository.findAll()).thenReturn(givenListOfStocks());
+
+        List<Stock> listOfStocks = stockService.listStocks(USER_ID);
+
+        assertThat(listOfStocks, notNullValue());
+        assertThat(listOfStocks.size(), is(2));             // Since the third element belongs to another User
+
+        verify(userRepository, times(1)).findById(USER_ID);
+        verify(stockRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void givenNonExistingUser_whenListingStocks_thenExceptionIsThrown() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> stockService.listStocks(USER_ID));
+
+        assertThat(exception.getStatus(), is(HttpStatus.NOT_FOUND));
+
+        verify(userRepository, times(1)).findById(USER_ID);
+    }
+
     private User givenExistingUser() {
         return User.builder()
                 .id(USER_ID)
@@ -165,6 +191,16 @@ class StockServiceUnitTest {
                 .quantity(STOCK_QUANTITY)
                 .build());
         return listSPD;
+    }
+
+    private List<Stock> givenListOfStocks() {
+        List<Stock> list = new ArrayList<>();
+        list.add(givenExistingStock());                 // Fillip up list with 3 elements, one of which doesn't belong to the User
+        list.add(givenExistingStock());
+        list.add(Stock.builder()
+                .user(User.builder().id(100L).build())
+                .build());
+        return list;
     }
 
     private void givenMockedUserRepositoryFindingUser() {
