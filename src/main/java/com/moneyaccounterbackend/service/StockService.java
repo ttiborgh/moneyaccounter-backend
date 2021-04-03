@@ -72,7 +72,7 @@ public class StockService {
     }
 
     public void validateStockData(String stockName, Long quantity, Double price) throws InvalidFormatException {
-        if (!StringUtils.hasText(stockName) || stockName.length() > 4 || stockName.length() < 1) {
+        if (!StringUtils.hasText(stockName) || stockName.length() > 4) {
             throw new InvalidFormatException("Stockname has no text or of invalid length: " + stockName);
         }
         if (quantity <= 0) {
