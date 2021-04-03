@@ -53,7 +53,7 @@ class StockServiceUnitTest {
 
     @Test
     public void givenValidData_whenCreatingWholeNewStock_thenStockIsSaved() throws InvalidFormatException {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
+        givenMockedUserRepositoryFindingUser();
         when(stockRepository.findByStockName(any(String.class))).thenReturn(Optional.empty());
         when(stockRepository.save(any(Stock.class))).thenAnswer(invocationOnMock -> {
             Stock stock = invocationOnMock.getArgument(0);                          // TODO: Find another solution later
@@ -82,7 +82,7 @@ class StockServiceUnitTest {
 
     @Test
     public void givenValidData_whenAddingNewPurchaseToAlreadyExistingStock_thenStockPurchaseListIsUpdated() throws InvalidFormatException {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
+        givenMockedUserRepositoryFindingUser();
         when(stockRepository.findByStockName(STOCK_NAME)).thenReturn(Optional.of(givenExistingStock()));
         when(stockRepository.save(any(Stock.class))).thenAnswer(invocationOnMock -> {
             Stock stock = invocationOnMock.getArgument(0);
@@ -135,5 +135,9 @@ class StockServiceUnitTest {
                 .quantity(STOCK_QUANTITY)
                 .build());
         return listSPD;
+    }
+
+    private void givenMockedUserRepositoryFindingUser() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
     }
 }
