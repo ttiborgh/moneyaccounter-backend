@@ -6,7 +6,6 @@ import com.moneyaccounterbackend.entity.User;
 import com.moneyaccounterbackend.exception.InvalidFormatException;
 import com.moneyaccounterbackend.repository.StockRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
-import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,10 +53,10 @@ class StockServiceUnitTest {
 
     @Test
     public void givenValidData_whenCreatingWholeNewStock_thenStockIsSaved() throws InvalidFormatException {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenValidUser()));
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
         when(stockRepository.findByStockName(any(String.class))).thenReturn(Optional.empty());
         when(stockRepository.save(any(Stock.class))).thenAnswer(invocationOnMock -> {
-            Stock stock = invocationOnMock.getArgument(0);                          // TODO: Find another solution later if there is
+            Stock stock = invocationOnMock.getArgument(0);                          // TODO: Find another solution later
             stock.setId(STOCK_ID);
             stock.getStockPurchaseDetails().get(0).setId(STOCK_PURCHASE_ID);
             return stock;
@@ -76,9 +76,39 @@ class StockServiceUnitTest {
         assertThat(createdStock.getStockPurchaseDetails().get(0).getCreatedAt(), notNullValue());
 
         verify(userRepository, times(1)).findById(USER_ID);
+        verify(stockRepository, times(1)).findByStockName(any(String.class));
+        verify(stockRepository, times(1)).save(any(Stock.class));
     }
 
-    private User givenValidUser() {
+    @Test
+    public void givenValidData_whenAddingNewPurchaseToAlreadyExistingStock_thenStockPurchaseListIsUpdated() throws InvalidFormatException {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
+        when(stockRepository.findByStockName(STOCK_NAME)).thenReturn(Optional.of(givenExistingStock()));
+        when(stockRepository.save(any(Stock.class))).thenAnswer(invocationOnMock -> {
+            Stock stock = invocationOnMock.getArgument(0);
+            stock.getStockPurchaseDetails().get(1).setId(STOCK_PURCHASE_ID);
+            return stock;
+        });
+
+        Stock updatedStockWithNewPurchase = stockService.createNewStockEntry(USER_ID, STOCK_NAME, STOCK_QUANTITY, STOCK_PRICE);
+
+        assertThat(updatedStockWithNewPurchase, notNullValue());
+        assertThat(updatedStockWithNewPurchase.getUser().getId(), is(USER_ID));
+        assertThat(updatedStockWithNewPurchase.getStockName(), is(STOCK_NAME));
+        assertThat(updatedStockWithNewPurchase.getId(), is(STOCK_ID));
+        assertThat(updatedStockWithNewPurchase.getStockPurchaseDetails(), notNullValue());
+        assertThat(updatedStockWithNewPurchase.getStockPurchaseDetails().size(), is(2));
+        assertThat(updatedStockWithNewPurchase.getStockPurchaseDetails().get(1).getId(), is(STOCK_PURCHASE_ID));
+        assertThat(updatedStockWithNewPurchase.getStockPurchaseDetails().get(1).getQuantity(), is(STOCK_QUANTITY));
+        assertThat(updatedStockWithNewPurchase.getStockPurchaseDetails().get(1).getPrice(), is(STOCK_PRICE));
+        assertThat(updatedStockWithNewPurchase.getStockPurchaseDetails().get(1).getStock().getId(), is(STOCK_ID));
+
+        verify(userRepository, times(1)).findById(USER_ID);
+        verify(stockRepository, times(1)).findByStockName(STOCK_NAME);
+        verify(stockRepository, times(1)).save(any(Stock.class));
+    }
+
+    private User givenExistingUser() {
         return User.builder()
                 .id(USER_ID)
                 .username("User")
@@ -88,32 +118,22 @@ class StockServiceUnitTest {
                 .build();
     }
 
-    private Stock givenValidStock() {
+    private Stock givenExistingStock() {
         return Stock.builder()
                 .id(STOCK_ID)
-                .user(givenValidUser())
+                .user(givenExistingUser())
                 .stockName(STOCK_NAME)
-                .stockPurchaseDetails(givenListOfPurchaseDetails())
+                .stockPurchaseDetails(givenListOfOldPurchases())
                 .build();
     }
 
-    private List<StockPurchaseDetails> givenListOfPurchaseDetails() {
-        return List.of(StockPurchaseDetails.builder()
-                .id(STOCK_PURCHASE_ID)
+    private List<StockPurchaseDetails> givenListOfOldPurchases() {
+        List<StockPurchaseDetails> listSPD = new ArrayList<>();
+        listSPD.add(StockPurchaseDetails.builder()
                 .createdAt(CREATED_AT)
                 .price(STOCK_PRICE)
                 .quantity(STOCK_QUANTITY)
-                .stock(givenValidStock())
                 .build());
-    }
-
-    private StockPurchaseDetails givenPurchaseDetails() {
-        return StockPurchaseDetails.builder()
-                .id(STOCK_PURCHASE_ID)
-                .createdAt(CREATED_AT)
-                .price(STOCK_PRICE)
-                .quantity(STOCK_QUANTITY)
-                .stock(givenValidStock())
-                .build();
+        return listSPD;
     }
 }
