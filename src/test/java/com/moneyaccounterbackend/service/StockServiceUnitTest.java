@@ -52,6 +52,36 @@ class StockServiceUnitTest {
     }
 
     @Test
+    public void givenTooLongStockName_whenCreatingNewStock_thenInvalidFormatExceptionIsThrown() {
+        InvalidFormatException thrown = assertThrows(InvalidFormatException.class, () -> stockService.createNewStockEntry(1L, "GOOGLE", 10L, 1200.45));
+        assertThat(thrown.getMessage(), is("Stockname has no text or of invalid length: GOOGLE"));
+    }
+
+    @Test
+    public void givenTooShortStockName_whenCreatingNewStock_thenInvalidFormatExceptionIsThrown() {
+        InvalidFormatException thrown = assertThrows(InvalidFormatException.class, () -> stockService.createNewStockEntry(1L, "", 10L, 1200.45));
+        assertThat(thrown.getMessage(), is("Stockname has no text or of invalid length: "));
+    }
+
+    @Test
+    public void givenZeroQuantity_whenCreatingNewStock_thenInvalidFormatExceptionIsThrown() {
+        InvalidFormatException thrown = assertThrows(InvalidFormatException.class, () -> stockService.createNewStockEntry(1L, "AAPL", 0L, 123.4));
+        assertThat(thrown.getMessage(), is("Quantity of stock during transaction can't be 0 or lower than that: 0"));
+    }
+
+    @Test
+    public void givenNegativeQuantity_whenCreatingNewStock_thenInvalidFormatExceptionIsThrown() {
+        InvalidFormatException thrown = assertThrows(InvalidFormatException.class, () -> stockService.createNewStockEntry(1L, "AAPL", -5L, 123.4));
+        assertThat(thrown.getMessage(), is("Quantity of stock during transaction can't be 0 or lower than that: -5"));
+    }
+
+    @Test
+    public void givenNegativePrice_whenCreatingNewStock_thenInvalidFormatExceptionIsThrown() {
+        InvalidFormatException thrown = assertThrows(InvalidFormatException.class, () -> stockService.createNewStockEntry(1L, "AAPL", 5L, -10.5));
+        assertThat(thrown.getMessage(), is("Stock's price is negative: -10.5"));
+    }
+
+    @Test
     public void givenValidData_whenCreatingWholeNewStock_thenStockIsSaved() throws InvalidFormatException {
         givenMockedUserRepositoryFindingUser();
         when(stockRepository.findByStockName(any(String.class))).thenReturn(Optional.empty());
