@@ -164,6 +164,10 @@ class StockServiceUnitTest {
         verify(userRepository, times(1)).findById(USER_ID);
     }
 
+    private void givenMockedUserRepositoryFindingUser() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
+    }
+
     private User givenExistingUser() {
         return User.builder()
                 .id(USER_ID)
@@ -195,15 +199,11 @@ class StockServiceUnitTest {
 
     private List<Stock> givenListOfStocks() {
         List<Stock> list = new ArrayList<>();
-        list.add(givenExistingStock());                 // Fillip up list with 3 elements, one of which doesn't belong to the User
+        list.add(givenExistingStock());                 // Filling up list with 3 elements, one of which doesn't belong to the User
         list.add(givenExistingStock());
         list.add(Stock.builder()
                 .user(User.builder().id(100L).build())
                 .build());
         return list;
-    }
-
-    private void givenMockedUserRepositoryFindingUser() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUser()));
     }
 }
