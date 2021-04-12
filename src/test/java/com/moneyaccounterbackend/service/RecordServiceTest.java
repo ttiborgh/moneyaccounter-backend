@@ -69,7 +69,7 @@ class RecordServiceTest {
 
     @Test
     public void givenInvalidUserId_whenAddingNewRecord_thenExceptionIsThrown() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+        givenMockedUserRepositoryNotFindingUserById();
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recordService.addingNewRecord(USER_ID, givenValidRecordDTO()));
         assertThat(exception.getStatus(), is(HttpStatus.NOT_FOUND));
@@ -86,7 +86,7 @@ class RecordServiceTest {
 
     @Test
     public void givenInvalidUserId_whenRetrievingAllPersonalRecords_thenExceptionIsThrown() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+        givenMockedUserRepositoryNotFindingUserById();
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recordService.retrieveRecords(USER_ID));
         assertThat(exception.getStatus(), is(HttpStatus.NOT_FOUND));
@@ -129,5 +129,9 @@ class RecordServiceTest {
 
     private void givenMockedUserRepositoryFindingUserWithRecords() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUserWithRecords()));
+    }
+
+    private void givenMockedUserRepositoryNotFindingUserById() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
     }
 }
