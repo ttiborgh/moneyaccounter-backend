@@ -43,26 +43,17 @@ public class RecordService {
     }
 
     public List<Record> retrieveRecords(Long id) {
-        Optional<User> foundUser = userRepository.findById(id);
+        User foundUser = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(foundUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        return foundUser.get().getListOfRecords();
+        return foundUser.getListOfRecords();
     }
 
     public User deleteRecordById(Long userId, Long recordId) {
-        Optional<User> user = userRepository.findById(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        } else {
-            recordRepository.deleteById(recordId);
-            userService.calculatingNewBalanceOfUser(user.get());
-        }
-
-        return user.get();
+        recordRepository.deleteById(recordId);
+        userService.calculatingNewBalanceOfUser(user);
+        return user;
     }
 
     public void validateRecordData(Record record) throws InvalidFormatException {
