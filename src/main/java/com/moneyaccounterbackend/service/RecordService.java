@@ -29,16 +29,14 @@ public class RecordService {
         this.userService = userService;
     }
 
-    public User addingNewRecord(Long id, Record record) {
+    public Record addingNewRecord(Long id, Record record) {
         Optional<User> foundUser = userRepository.findById(id);
 
         if (foundUser.isPresent()) {
             User user = foundUser.get();
             record.setUser(user);
             record.setCreatedAt(LocalDateTime.now());
-            recordRepository.save(record);
-            user.getListOfRecords().add(record);
-            return userRepository.save(user);
+            return recordRepository.save(record);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

@@ -26,7 +26,7 @@ public class RecordController {
     
     @PostMapping("/record/{userid}")
     @ResponseStatus(HttpStatus.CREATED)
-    public User addNewRecord(@PathVariable(name = "userid") Long userId, @RequestBody Record record) {
+    public Record addNewRecord(@PathVariable(name = "userid") Long userId, @RequestBody Record record) {
         LOGGER.info("REQUEST BY USER {}, TO ADD NEW RECORD {}", userId, record);
 
         return recordService.addingNewRecord(userId, record);
