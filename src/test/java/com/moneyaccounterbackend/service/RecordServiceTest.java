@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.hamcrest.CoreMatchers.is;
@@ -64,6 +67,14 @@ class RecordServiceTest {
         verify(userRepository, times(1)).findById(USER_ID);
     }
 
+    @Test
+    public void givenInvalidUserId_whenAddingNewRecord_thenExceptionIsThrown() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recordService.addingNewRecord(USER_ID, givenValidRecordDTO()));
+        assertThat(exception.getStatus(), is(HttpStatus.NOT_FOUND));
+    }
+    
     private User givenExistingUserWithoutRecords() {
         return User.builder()
                 .id(USER_ID)
