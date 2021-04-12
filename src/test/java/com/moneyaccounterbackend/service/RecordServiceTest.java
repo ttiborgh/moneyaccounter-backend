@@ -47,7 +47,7 @@ class RecordServiceTest {
 
     @Test
     public void givenValidUserIdAndRecordData_whenAddingNewRecordByUser_thenRecordIsCreated() {
-        givenMockedUserRepositoryFindingUser();
+        givenMockedUserRepositoryFindingUserWithoutRecords();
         when(recordRepository.save(any(Record.class))).thenAnswer(invocationOnMock -> {
             Record record = invocationOnMock.getArgument(0);
             record.setId(RECORD_ID);
@@ -74,7 +74,16 @@ class RecordServiceTest {
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recordService.addingNewRecord(USER_ID, givenValidRecordDTO()));
         assertThat(exception.getStatus(), is(HttpStatus.NOT_FOUND));
     }
-    
+
+    @Test
+    public void givenValidUserId_whenRetrievingAllPersonalRecords_thenListIsReturned() {
+        givenMockedUserRepositoryFindingUserWithRecords();
+
+        List<Record> records = recordService.retrieveRecords(USER_ID);
+
+        assertThat(records.size(), is(2));      // since we added two empty records into users list
+    }
+
     private User givenExistingUserWithoutRecords() {
         return User.builder()
                 .id(USER_ID)
@@ -83,6 +92,17 @@ class RecordServiceTest {
                 .email("valid@email.com")
                 .password("valid")
                 .listOfRecords(new ArrayList<>())
+                .build();
+    }
+
+    private User givenExistingUserWithRecords() {
+        return User.builder()
+                .id(USER_ID)
+                .username("User")
+                .balance(0L)
+                .email("valid@email.com")
+                .password("valid")
+                .listOfRecords(List.of(new Record(), new Record()))
                 .build();
     }
 
@@ -95,7 +115,11 @@ class RecordServiceTest {
                 .build();
     }
 
-    private void givenMockedUserRepositoryFindingUser() {
+    private void givenMockedUserRepositoryFindingUserWithoutRecords() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUserWithoutRecords()));
+    }
+
+    private void givenMockedUserRepositoryFindingUserWithRecords() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(givenExistingUserWithRecords()));
     }
 }
