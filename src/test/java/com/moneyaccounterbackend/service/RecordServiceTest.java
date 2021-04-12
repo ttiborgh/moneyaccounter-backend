@@ -84,6 +84,14 @@ class RecordServiceTest {
         assertThat(records.size(), is(2));      // since we added two empty records into users list
     }
 
+    @Test
+    public void givenInvalidUserId_whenRetrievingAllPersonalRecords_thenExceptionIsThrown() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recordService.retrieveRecords(USER_ID));
+        assertThat(exception.getStatus(), is(HttpStatus.NOT_FOUND));
+    }
+
     private User givenExistingUserWithoutRecords() {
         return User.builder()
                 .id(USER_ID)
