@@ -1,7 +1,6 @@
 package com.moneyaccounterbackend.service;
 
 import com.moneyaccounterbackend.entity.Record;
-import com.moneyaccounterbackend.entity.Stock;
 import com.moneyaccounterbackend.entity.User;
 import com.moneyaccounterbackend.repository.RecordRepository;
 import com.moneyaccounterbackend.repository.UserRepository;
@@ -19,12 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNotNull;
-import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
